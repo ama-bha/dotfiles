@@ -4,7 +4,17 @@
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
+
+(keyboard-translate ?\C-h ?\C-x )
+(keyboard-translate ?\C-x ?\C-h )
+(keyboard-translate ?\C-t ?\C-c )
+(keyboard-translate ?\C-c ?\C-t )
+(define-key key-translation-map [deletechar] (kbd "C-c x") )
+(define-key key-translation-map "≈" (kbd "M-x") )
+
 (package-initialize)
+
+
 
 (require 'package)
 (add-to-list
@@ -23,10 +33,19 @@
 (require 'flycheck)
 (require 'dired-sidebar)
 (require 'hydra)
+(require 'arduino-mode)
+(require 'company)
+(require 'toml)
+(require 'magit-mode)
+(require 'cl-lib)
+
 (ido-mode t)
 (winner-mode 1)
 (recentf-mode)
 (require 'q-mode)
+(electric-pair-mode 1)
+
+
 (setq company-idle-delay 0.1)
 (setq company-minimum-prefix-length 2)
 (setq help-window-select t)
@@ -35,46 +54,61 @@
 (define-key ctl-x-map (kbd "C-r") 'helm-recentf)
 (define-key global-map (kbd "C-b") 'helm-buffers-list)
 (define-key help-map "b" 'helm-descbinds)
-(define-key mode-specific-map (kbd "a t") 'company-mode)
+
 
 (elpy-enable)
 
-(define-key global-map (kbd "C-l") 'hhhhh)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(keyboard-translate ?\C-h ?\C-x)
-(keyboard-translate ?\C-x ?\C-h)
-(keyboard-translate ?\C-c ?\C-t)
-(keyboard-translate ?\C-t ?\C-c)
 
-(define-key global-map (kbd "C-o") nil)
-(define-key global-map (kbd "C-o d d") 'delete-window)
-
-
-(define-key global-map (kbd "C-o f")
-  (lambda () (interactive)
-    (let (x y)
-      (setq x (thing-at-point 'symbol))
-      (setq x (cond  (x (substring-no-properties x)) )  )
-      (setq x (cond  (x (string-to-int x)) )  )
-
-      
-      (cond (x
-	     (progn
+(defun convert-to-hex () (interactive)
+  (let (x y)
+    (setq x (thing-at-point 'symbol))
+    (setq x (cond  (x (substring-no-properties x)) )  )
+    (setq x (cond  (x (string-to-int x)) )  )
+    (cond (x
+	   (progn
 	     (backward-word)
 	     (kill-word 1)
 
-	      (insert (format "0x%02X" x))
-	      
-	       )
-	       )
-	      )
-      )
+	     (insert (format "0x%02X" x))
+	     
+	     )
+	   )
+	  )
     )
   )
 
+(define-key global-map (kbd "C-o") nil)
+(setq ctlc-x-map (make-sparse-keymap))
+(define-key global-map (kbd "C-c x") ctlc-x-map)
 
-(require 'cl-lib)
+(setq magit-shortcuts-map (make-sparse-keymap))
+(setq window-shortcuts-map (make-sparse-keymap))
+(setq other-shortcuts-map (make-sparse-keymap))
+
+
+(define-key ctlc-x-map "m" magit-shortcuts-map)
+(define-key ctlc-x-map "w" window-shortcuts-map)
+(define-key ctlc-x-map "d" window-shortcuts-map)
+
+
+
+
+
+
+(define-key window-shortcuts-map "o" 'other-window)
+(define-key window-shortcuts-map (kbd "d d") 'detele-window)
+(define-key window-shortcuts-map (kbd "d o") 'detele-other-windows)
+(define-key window-shortcuts-map (kbd "d k") 'kill-buffer-and-window)
+(define-key other-shortcuts-map "o" 'other-window)
+(define-key other-shortcuts-map (kbd "C-o") 'other-window)
+
+
+
+(define-key help-map "b" 'helm-descbinds)
+
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -85,16 +119,11 @@
  '(custom-enabled-themes (quote (zenburn)))
  '(custom-safe-themes
    (quote
-    ("05a4b82c39107308b5c3720fd0c9792c2076e1ff3ebb6670c6f1c98d44227689" default)))
+    ("a7051d761a713aaf5b893c90eaba27463c791cd75d7257d3a8e66b0c8c346e77" "05a4b82c39107308b5c3720fd0c9792c2076e1ff3ebb6670c6f1c98d44227689" default)))
  '(exec-path
    (quote
     ("/usr/bin" "/bin" "/usr/sbin" "/sbin" "/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_9" "/Applications/Emacs.app/Contents/MacOS/libexec-x86_64-10_9" "/Applications/Emacs.app/Contents/MacOS/libexec" "/Applications/Emacs.app/Contents/MacOS/bin" "/usr/local/bin/")))
  '(inhibit-startup-screen t)
- '(package-enable-at-startup nil)
- '(package-selected-packages
-   (quote
-    (hydra dired-sidebar elpy flycheck ## zenburn-theme toml smartparens s markdown-mode markdown-mode+ markdown-preview-eww markdown-preview-mode company ess helm helm-descbinds helm-describe-modes magit r-autoyas yasnippet yasnippet-snippets)))
- '(python-shell-exec-path (quote ("/usr/local/bin/")))
  '(q-program "/Users/pooja/q/m32/q")
  '(recentf-max-saved-items 100))
 (custom-set-faces
@@ -197,5 +226,4 @@ _~_: modified
   :init
   (bind-key "C-." 'ace-jump-mode))
 
-
-
+(menu-bar-mode 0)

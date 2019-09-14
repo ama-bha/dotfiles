@@ -1,9 +1,8 @@
-
+set nocompatible
 set directory=/tmp
-set encoding=utf-8
 set expandtab
 set tabstop=4
-let &t_Co=256
+set nocompatible
 syntax on
 filetype plugin indent on
 
@@ -24,8 +23,7 @@ filetype indent on
 ""inoremap " ""<ESC>i
 
 
-
-let mapleader = ","
+let mapleader = "`"
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>h :help<cr>

@@ -1,41 +1,31 @@
-
-
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-
 (keyboard-translate ?\C-h ?\C-x )
 (keyboard-translate ?\C-x ?\C-h )
 (keyboard-translate ?\C-t ?\C-c )
 (keyboard-translate ?\C-c ?\C-t )
-(define-key key-translation-map [deletechar] (kbd "C-c x") )
-(define-key key-translation-map "≈" (kbd "M-x") )
-
-(package-initialize)
-
 
 
 (require 'package)
-(add-to-list
-   'package-archives
-   '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
-   t)
-(add-to-list
-   'package-archives
-   '("melpa" . "http://melpa.milkbox.net/packages/")
-   t)
+(add-to-list ' package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+
 
 (require 'use-package)
 
-(use-package company
-  :ensure t)
-(use-package org-roam
-  :ensure t)
-(use-package helm
-  :ensure  t)
-(use-package helm-descbinds
-  :ensure t)
+(use-package company  :ensure t)
+(use-package org-roam  :ensure t)
+(use-package helm  :ensure  t)
+(use-package helm-descbinds  :ensure t)
+(use-package elpy  :ensure t)
+(use-package leetcode :ensure t)
+
+(use-package q-mode :ensure t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.[kq]\\'" . q-mode))
+  :config
+  (define-key q-mode-map (kbd "C-r") 'q-eval-line-and-step)
+  )
+  
 
 (ido-mode t)
 (winner-mode 1)
@@ -86,10 +76,17 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (org-roam company use-package))))
+ '(package-selected-packages '(leetcode q-mode org-roam company use-package))
+ '(q-program "/home/aman/q/l64/q"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+
+
+(setq leetcode-save-solutions t)
+(setq leetcode-directory "~/leetcode")

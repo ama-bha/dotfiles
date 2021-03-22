@@ -1,0 +1,271 @@
+
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+
+(keyboard-translate ?\C-h ?\C-x )
+(keyboard-translate ?\C-x ?\C-h )
+(keyboard-translate ?\C-t ?\C-c )
+(keyboard-translate ?\C-c ?\C-t )
+(define-key key-translation-map [deletechar] (kbd "C-c x") )
+(define-key key-translation-map "≈" (kbd "M-x") )
+
+(package-initialize)
+
+
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
+
+(require 'package)
+(require 'mu4e)
+
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+
+(require 'use-package)
+
+(use-package company
+  :ensure t
+  )
+(use-package telephone-line
+  :ensure t)
+
+
+(use-package helm-descbinds
+	     :ensure t)
+(use-package which-key
+  :ensure t)
+
+(use-package q-mode
+	     :ensure t)
+(use-package websocket
+  :ensure t)
+
+(use-package key-chord
+  :ensure t)
+
+(use-package hyperbole
+  :ensure t)
+
+(use-package treemacs
+  :ensure t)
+
+
+(require 'org-roam)
+(require 'q-mode)
+(require 'space-chord)
+
+(key-chord-mode 1)
+(space-chord-define global-map "f" 'find-file)
+
+(which-key-mode)
+
+(ido-mode t)
+(winner-mode 1)
+(recentf-mode)
+(electric-pair-mode 1)
+(telephone-line-mode 1)
+
+(setq telephone-line-subseparator-faces '())
+(setq telephone-line-height 24
+      telephone-line-evil-use-short-tag t)
+
+(setq company-idle-delay 0.1)
+(setq company-minimum-prefix-length 2)
+(setq help-window-select t)
+(define-key ctl-x-map "r" 'helm-recentf)
+(define-key ctl-x-map (kbd "C-r") 'helm-recentf)
+(define-key global-map (kbd "C-b") 'helm-buffers-list)
+(define-key help-map "b" 'helm-descbinds)
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(define-key global-map (kbd "C-o") nil)
+(setq ctlc-x-map (make-sparse-keymap))
+(define-key global-map (kbd "C-c x") ctlc-x-map)
+
+(setq magit-shortcuts-map (make-sparse-keymap))
+(setq window-shortcuts-map (make-sparse-keymap))
+(setq other-shortcuts-map (make-sparse-keymap))
+
+
+(define-key ctlc-x-map "m" magit-shortcuts-map)
+(define-key ctlc-x-map "w" window-shortcuts-map)
+(define-key ctlc-x-map "d" window-shortcuts-map)
+
+
+
+
+(define-key window-shortcuts-map "o" 'other-window)
+(define-key window-shortcuts-map (kbd "d d") 'detele-window)
+(define-key window-shortcuts-map (kbd "d o") 'detele-other-windows)
+(define-key window-shortcuts-map (kbd "d k") 'kill-buffer-and-window)
+(define-key other-shortcuts-map "o" 'other-window)
+(define-key other-shortcuts-map (kbd "C-o") 'other-window)
+(define-key ctl-x-map (kbd "C-r")  'helm-recentf)
+
+(define-key help-map "b" 'helm-descbinds)
+(define-key global-map (kbd "C-b") 'helm-buffers-list)
+
+(define-key global-map (kbd "M-x") 'helm-M-x)
+
+
+
+(setq org-roam-completion-system 'helm)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(mu4e-mu-binary "/usr/local/bin/mu")
+ '(org-log-into-drawer t)
+ '(org-roam-directory "/Users/pooja/org/roam/")
+ '(org-startup-truncated nil)
+ '(package-selected-packages
+   (quote
+    (skewer-mode treemacs Treemacs hyperbole space-chord key-chord websocket q-mode telephone-line all-the-icons which-key org-roam company use-package)))
+ '(q-program
+   "QHOME=/Users/pooja/workspace/software/kdb /Users/pooja/workspace/software/kdb/m64/q"))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+
+(defun org-roam-open-at-point-force ()
+  "Open an Org-roam link or visit the text previewed at point.
+When point is on an Org-roam link, open the link in the Org-roam window.
+When point is on the Org-roam preview text, open the link in the Org-roam
+window, and navigate to the point.
+This function hooks into `org-open-at-point' via `org-open-at-point-functions'."
+  (interactive)
+  (cond
+   ;; Org-roam link
+   ((let* ((context (org-element-context))
+           (path (org-element-property :raw-link context))
+           )
+      (when  (eq (org-element-type context) 'link)
+        (org-roam-insert path)
+        (org-show-context)
+        t)))
+   ;; If called via `org-open-at-point', fall back to default behavior.
+   (t nil)))
+
+
+(add-to-list 'exec-path "/usr/local/bin/")
+
+
+
+
+
+
+(setq
+ mue4e-headers-skip-duplicates  t
+ mu4e-view-show-images t
+ mu4e-view-show-addresses t
+ mu4e-compose-format-flowed nil
+ mu4e-date-format "%y/%m/%d"
+ mu4e-headers-date-format "%Y/%m/%d"
+ mu4e-change-filenames-when-moving t
+ mu4e-attachments-dir "~/Downloads"
+
+ mu4e-maildir       "~/Maildir/Hotmail"   ;; top-level Maildir
+ ;; note that these folders below must start with /
+ ;; the paths are relative to maildir root
+ mu4e-refile-folder "/archive"
+ mu4e-sent-folder   "/sent"
+ mu4e-drafts-folder "/drafts"
+ mu4e-trash-folder  "/trash")
+
+;; this setting allows to re-sync and re-index mail
+;; by pressing U
+(setq mu4e-get-mail-command  "mbsync -a")
+
+
+
+
+(setq org-agenda-files '("/Users/pooja/workspace/personal/"))
+
+(unless (string-match-p "\\.gpg" org-agenda-file-regexp)
+  (setq org-agenda-file-regexp
+        (replace-regexp-in-string "\\\\\\.org" "\\\\.org\\\\(\\\\.gpg\\\\)?"
+                                  org-agenda-file-regexp)))
+
+(require 'skewer-mode)
+
+
+
+
+(defun iscons-p (x)
+  (and (listp x) (not (listp (cdr x))) )
+  )
+
+(iscons-p '("a" . "b"))
+
+(defun istrue(x) x)
+(defun isstringarrayp(x) (-all-p  'istrue (-map  'stringp x)))
+
+(isstringarrayp '("sd" . "sd"))
+
+
+
+(defun nested-assocp-to-hash-table(x)
+  (let ((z (make-hash-table :test 'equal)))
+  (if(isstringarrayp x)
+      (puthash (car x) (cdr x) z)
+    (progn
+      (-map (lambda(x)
+	      (puthash (car x)
+		       (nested-assocp-to-hash-table (cdr x))
+		       z)
+	      )
+	    x
+	    )
+      )
+    )
+  z
+  )
+  )
+  
+
+
+
+(setq nlist '(
+	      ("a" "sd" "sf" ("sdfdf" "a")  )
+	      ("c" "d" "ss" "e")
+	      ))
+
+(defmacro let1(k v e)  (message "k") `(let ((,k ,v)) ,e    )  )
+
+
+(let1 x (progn (message "l") 5)  (progn (message "v") (+ 8 1))    )
+
+
+
+(defmacro letn(&rest e)
+   (car e)
+  )
+
+
+
+
+(macroexpand '(letn x y z))
+
+(defmacro letn(&rest e)
+  (let  ((varlist ()))
+    (while
+	(cdr e)
+      (setq varlist  (append  varlist  (list (list (car e) (car (cdr e)))  ) ))
+      (setq e (cdr (cdr e)))
+      )
+      `(let* ,varlist  ,(car e) )
+    )
+
+  )
+
+(letn x 1 y (+ x 1) z (+ y 2) (+ x y z))
+
